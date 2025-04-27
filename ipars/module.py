@@ -4,9 +4,11 @@ from selenium import webdriver
 from time import sleep
 from os import remove
 from bs4 import BeautifulSoup
+import json
 
 class Pars:
     '''Библиотека для работы с файлами во время парсинга'''
+
 
     def __init__(self, url, pathToSaveFile, writeMethod='w'):
         """Конструктор"""
@@ -14,23 +16,35 @@ class Pars:
         self.pathToSaveFile = pathToSaveFile
         self.writeMethod = writeMethod
 
-    def returnBs4Object(self, userEncoding='utf8'):
+
+    def loadJson(self, pathToJsonFile:str):
+        """Получаем данные из json файла"""
+        with open(pathToJsonFile) as jsonFile:
+            src = json.load(jsonFile)
+        return src 
+
+
+    def dumpJson(self, data:any, pathToJsonFile:str):
+        """Записываем данные в json файл"""
+        with open(pathToJsonFile, 'w') as jsonFile:
+            json.dump(data, jsonFile, indent=4, ensure_ascii=0)
+
+
+    def returnBs4Object(self, myEncoding:str='utf8', parser:str='lxml'):
         """Возвращаем объект beautifulsoup"""
-        with open(self.pathToSaveFile, encoding=userEncoding) as file:
+        with open(self.pathToSaveFile, encoding=myEncoding) as file:
             src = file.read()
-        soup = BeautifulSoup(src, 'lxml')
+        soup = BeautifulSoup(src, parser)
         return soup
+
 
     def deleteFile(self):
         """Удаляем файл после работы с ним"""
         remove(self.pathToSaveFile)
 
 
-    def get_static_page(self):
+    def get_static_page(self, headers:dict):
         '''Получаем статическую страницу'''
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-        }
         try:
             # Отправляем запрос
             req = get(self.url, headers=headers)
@@ -59,13 +73,13 @@ class Pars:
 
 
     def get_dinamic_page(self, closeWindow:bool=1):
-        '''Функция для получения динамической страницы'''
-
+        '''Получаем динамическую страницу'''
 
         # Устанавливаем опции для Chrome WebDriver
         options = Options()
         if closeWindow:
             options.add_argument('--headless')
+
         # открываем браузер
         with webdriver.Chrome(options=options) as driver:
             driver.get(self.url)
