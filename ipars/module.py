@@ -1,21 +1,12 @@
 from selenium.webdriver.chrome.options import Options
 from requests import get, RequestException
 from selenium import webdriver
-from time import sleep
-from os import remove
 from bs4 import BeautifulSoup
+from time import sleep
 import json
 
 class Pars:
     '''Библиотека для работы с файлами во время парсинга'''
-
-
-    def __init__(self, url, pathToSaveFile, writeMethod='w'):
-        """Конструктор"""
-        self.url = url
-        self.pathToSaveFile = pathToSaveFile
-        self.writeMethod = writeMethod
-
 
     def loadJson(self, pathToJsonFile:str):
         """Получаем данные из json файла"""
@@ -26,53 +17,57 @@ class Pars:
 
     def dumpJson(self, data:any, pathToJsonFile:str):
         """Записываем данные в json файл"""
-        with open(pathToJsonFile, 'w') as jsonFile:
+        with open(pathToJsonFile, 'w', encoding='utf8') as jsonFile:
             json.dump(data, jsonFile, indent=4, ensure_ascii=0)
 
 
-    def returnBs4Object(self, myEncoding:str='utf8', parser:str='lxml'):
+    def returnBs4Object(self, pathToFile, myEncoding:str='utf8', parser:str='lxml'):
         """Возвращаем объект beautifulsoup"""
-        with open(self.pathToSaveFile, encoding=myEncoding) as file:
+        with open(pathToFile, encoding=myEncoding) as file:
             src = file.read()
         soup = BeautifulSoup(src, parser)
         return soup
 
 
-    def deleteFile(self):
-        """Удаляем файл после работы с ним"""
-        remove(self.pathToSaveFile)
-
-
-    def get_static_page(self, headers:dict):
+    def get_static_page(self, url, pathToSaveFile, writeMethod='w', headers:dict='')-> int():
         '''Получаем статическую страницу'''
+
+        if headers == '':
+            headers ={
+                "Accept": "*/*",
+                "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1"
+                }
+
         try:
             # Отправляем запрос
-            req = get(self.url, headers=headers)
+            req = get(url, headers=headers)
             req.raise_for_status()  # Проверка на ошибки HTTP
 
             # Записываем данные
-            if self.writeMethod == 'w':
+            if writeMethod == 'w':
                 src = req.text
-                with open(self.pathToSaveFile, self.writeMethod, encoding='utf-8') as file:
+                with open(pathToSaveFile, 'w', encoding='utf-8') as file:
                     file.write(src)
-            elif self.writeMethod == 'wb':
+            elif writeMethod == 'wb':
                 src = req.content
-                with open(self.pathToSaveFile, self.writeMethod) as file:
+                with open(pathToSaveFile, 'wb') as file:
                     file.write(src)
             else:
-                raise ValueError("Неподдерживаемый метод записи: {}".format(self.writeMethod))
+                raise ValueError(f"Неподдерживаемый метод записи: {writeMethod}")
 
         # Обрабатываем ошибки
         except RequestException as e:
-            print(f"Ошибка при запросе: {e}")
+            return req.status_code
         except IOError as e:
             print(f"Ошибка при записи в файл: {e}")
         except Exception as e:
-            print('Ошибка:')
-            print(e)
+            return e
+        
+        # Если всё выполнилось хорошо, то возвращаем статус 200
+        return 200
 
 
-    def get_dinamic_page(self, closeWindow:bool=1):
+    def get_dinamic_page(self, url, pathToSaveFile, closeWindow:bool=1) -> None:
         '''Получаем динамическую страницу'''
 
         # Устанавливаем опции для Chrome WebDriver
@@ -82,7 +77,7 @@ class Pars:
 
         # открываем браузер
         with webdriver.Chrome(options=options) as driver:
-            driver.get(self.url)
+            driver.get(url)
             # Прокручиваем страницу до самого низа
             last_height = driver.execute_script("return document.body.scrollHeight")
             while True:
@@ -98,5 +93,5 @@ class Pars:
             # Получаем HTML-код страницы
             html_content = driver.page_source
             # Сохраняем HTML-код в файл
-            with open(self.pathToSaveFile, "w", encoding="utf-8") as file:
+            with open(pathToSaveFile, "w", encoding="utf-8") as file:
                 file.write(html_content)
