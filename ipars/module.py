@@ -4,6 +4,39 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 from time import sleep
 import json
+import csv
+
+class WorkWithScv:
+    '''Класс для работы с csv файлами во время парсинга'''
+
+    def __init__(self, newline:str='', encoding:str='cp1251'):
+        '''Конструктор'''
+        self.newline = newline
+        self.encoding = encoding
+    
+    def writerow(self, file_path:str, mode:str, row:any, delimiter:str=';'):
+        '''Записываем строку в csv файл'''
+        with open(file_path, mode=mode, newline=self.newline, encoding=self.encoding) as file:
+            writer = csv.writer(file, delimiter=delimiter)
+            writer.writerow(row)
+    
+    def writerows(self, file_path:str, mode:str, row:list, delimiter:str=';'):
+        '''Записываем строки в csv файл'''
+        with open(file_path, mode=mode, newline=self.newline, encoding=self.encoding) as file:
+            writer = csv.writer(file, delimiter=delimiter)
+            writer.writerows(row)
+
+    def getRows(self, file_path:str, delimiter:str=';'):
+        '''Возвращает строки файла'''
+        userRows = []
+
+        with open(file_path, mode='r', newline=self.newline, encoding=self.encoding) as csvfile:
+            csv_reader = csv.reader(csvfile, delimiter=delimiter)
+        
+            for row in csv_reader:
+                userRows.append(row)
+        
+        return userRows
 
 class Pars:
     '''Библиотека для работы с файлами во время парсинга'''
