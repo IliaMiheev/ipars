@@ -9,50 +9,53 @@ import csv
 class WorkWithScv:
     '''Класс для работы с csv файлами во время парсинга'''
 
-    def __init__(self, newline:str='', encoding:str='cp1251'):
+    def __init__(self, newline:str='', encoding:str='cp1251', delimiter:str=';'):
         '''Конструктор'''
         self.newline = newline
         self.encoding = encoding
+        self.delimiter = delimiter
     
-    def writerow(self, file_path:str, mode:str, row:any, delimiter:str=';'):
+    def writerow(self, file_path:str, mode:str, row:list):
         '''Записываем строку в csv файл'''
         with open(file_path, mode=mode, newline=self.newline, encoding=self.encoding) as file:
-            writer = csv.writer(file, delimiter=delimiter)
+            writer = csv.writer(file, delimiter=self.delimiter)
             writer.writerow(row)
     
-    def writerows(self, file_path:str, mode:str, row:list, delimiter:str=';'):
+    def writerows(self, file_path:str, mode:str, row:list):
         '''Записываем строки в csv файл'''
         with open(file_path, mode=mode, newline=self.newline, encoding=self.encoding) as file:
-            writer = csv.writer(file, delimiter=delimiter)
+            writer = csv.writer(file, delimiter=self.delimiter)
             writer.writerows(row)
 
-    def getRows(self, file_path:str, delimiter:str=';'):
+    def getRows(self, file_path:str):
         '''Возвращает строки файла'''
         userRows = []
 
         with open(file_path, mode='r', newline=self.newline, encoding=self.encoding) as csvfile:
-            csv_reader = csv.reader(csvfile, delimiter=delimiter)
+            csv_reader = csv.reader(csvfile, delimiter=self.delimiter)
         
             for row in csv_reader:
                 userRows.append(row)
         
         return userRows
 
-class Pars:
-    '''Библиотека для работы с файлами во время парсинга'''
-
-    def loadJson(self, pathToJsonFile:str):
+class WorkWithJson:
+    '''Модуль для работы с json файлами'''
+    def load(self, pathToJsonFile:str):
         """Получаем данные из json файла"""
         with open(pathToJsonFile) as jsonFile:
             src = json.load(jsonFile)
         return src 
 
 
-    def dumpJson(self, data:any, pathToJsonFile:str):
+    def dump(self, pathToJsonFile:str, data:any):
         """Записываем данные в json файл"""
         with open(pathToJsonFile, 'w', encoding='utf8') as jsonFile:
             json.dump(data, jsonFile, indent=4, ensure_ascii=0)
 
+
+class Pars:
+    '''Модуль для работы с запросами и HTML файлами во время парсинга'''
 
     def returnBs4Object(self, pathToFile, myEncoding:str='utf8', parser:str='lxml'):
         """Возвращаем объект beautifulsoup"""
@@ -62,7 +65,7 @@ class Pars:
         return soup
 
 
-    def get_static_page(self, url, pathToSaveFile, writeMethod='w', headers:dict='')-> int():
+    def get_static_page(self, pathToSaveFile, url, writeMethod='w', headers:dict='')-> int():
         '''Получаем статическую страницу'''
 
         if headers == '':
