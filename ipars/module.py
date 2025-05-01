@@ -41,16 +41,20 @@ class WorkWithScv:
 
 class WorkWithJson:
     '''Модуль для работы с json файлами'''
+
+    def __init__(self, encoding:str='utf8'):
+        self.encoding = encoding
+
     def load(self, pathToJsonFile:str):
         """Получаем данные из json файла"""
-        with open(pathToJsonFile) as jsonFile:
+        with open(pathToJsonFile, encoding=self.encoding) as jsonFile:
             src = json.load(jsonFile)
         return src 
 
 
     def dump(self, pathToJsonFile:str, data:any):
         """Записываем данные в json файл"""
-        with open(pathToJsonFile, 'w', encoding='utf8') as jsonFile:
+        with open(pathToJsonFile, 'w', encoding=self.encoding) as jsonFile:
             json.dump(data, jsonFile, indent=4, ensure_ascii=0)
 
 
