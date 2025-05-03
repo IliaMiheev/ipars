@@ -1,15 +1,15 @@
 from selenium.webdriver.chrome.options import Options
-from requests import get, RequestException
+import requests
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from time import sleep
 import json
 import csv
 
-class WorkWithScv:
+class CsvManager:
     '''Класс для работы с csv файлами во время парсинга'''
 
-    def __init__(self, newline:str='', encoding:str='cp1251', delimiter:str=';'):
+    def __init__(self, newline:str='', encoding:str='utf8', delimiter:str=';'):
         '''Конструктор'''
         self.newline = newline
         self.encoding = encoding
@@ -39,21 +39,21 @@ class WorkWithScv:
         
         return userRows
 
-class WorkWithJson:
+class JsonManager:
     '''Модуль для работы с json файлами'''
 
     def __init__(self, encoding:str='utf8'):
         self.encoding = encoding
 
     def load(self, pathToJsonFile:str):
-        """Получаем данные из json файла"""
+        '''Получаем данные из json файла'''
         with open(pathToJsonFile, encoding=self.encoding) as jsonFile:
             src = json.load(jsonFile)
         return src 
 
 
     def dump(self, pathToJsonFile:str, data:any):
-        """Записываем данные в json файл"""
+        '''Записываем данные в json файл'''
         with open(pathToJsonFile, 'w', encoding=self.encoding) as jsonFile:
             json.dump(data, jsonFile, indent=4, ensure_ascii=0)
 
@@ -62,26 +62,25 @@ class Pars:
     '''Модуль для работы с запросами и HTML файлами во время парсинга'''
 
     def returnBs4Object(self, pathToFile, myEncoding:str='utf8', parser:str='lxml'):
-        """Возвращаем объект beautifulsoup"""
+        '''Возвращаем объект beautifulsoup'''
         with open(pathToFile, encoding=myEncoding) as file:
             src = file.read()
         soup = BeautifulSoup(src, parser)
         return soup
 
 
-    def get_static_page(self, pathToSaveFile, url, writeMethod='w', headers:dict='')-> int():
-        '''Получаем статическую страницу'''
+    def get_static_page(self, pathToSaveFile, url, writeMethod='w', headers: dict = None) -> int:
+        '''Получаем статическую страницу и возвращаем статус ответа от сервера'''
 
-        if headers == '':
-            headers ={
+        if headers is None:
+            headers = {
                 "Accept": "*/*",
                 "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1"
-                }
+            }
 
         try:
             # Отправляем запрос
-            req = get(url, headers=headers)
-            req.raise_for_status()  # Проверка на ошибки HTTP
+            req = requests.get(url, headers=headers)
 
             # Записываем данные
             if writeMethod == 'w':
@@ -95,16 +94,12 @@ class Pars:
             else:
                 raise ValueError(f"Неподдерживаемый метод записи: {writeMethod}")
 
-        # Обрабатываем ошибки
-        except RequestException as e:
-            return req.status_code
-        except IOError as e:
-            print(f"Ошибка при записи в файл: {e}")
+            return req.status_code  # Возвращаем статус ответа от сервера
+
+        except requests.exceptions.HTTPError as http_err:
+            raise RuntimeError(f"HTTP ошибка: {http_err}") from http_err
         except Exception as e:
-            return e
-        
-        # Если всё выполнилось хорошо, то возвращаем статус 200
-        return 200
+            raise RuntimeError(e) from e
 
 
     def get_dinamic_page(self, url, pathToSaveFile, closeWindow:bool=1) -> None:
