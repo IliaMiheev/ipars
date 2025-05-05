@@ -1,8 +1,9 @@
 from selenium.webdriver.chrome.options import Options
-import requests
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from pprint import pprint
 from time import sleep
+import requests
 import json
 import csv
 
@@ -15,6 +16,9 @@ class CsvManager:
         self.encoding = encoding
         self.delimiter = delimiter
     
+    def pprint(self, data:any):
+        pprint(data)
+
     def writerow(self, file_path:str, mode:str, row:list):
         '''Записываем строку в csv файл'''
         with open(file_path, mode=mode, newline=self.newline, encoding=self.encoding) as file:
@@ -44,6 +48,9 @@ class JsonManager:
 
     def __init__(self, encoding:str='utf8'):
         self.encoding = encoding
+
+    def pprint(self, data:any):
+        pprint(data)
 
     def load(self, pathToJsonFile:str):
         '''Получаем данные из json файла'''
