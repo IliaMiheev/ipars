@@ -76,7 +76,7 @@ class Pars:
         return soup
 
 
-    def get_static_page(self, pathToSaveFile, url, writeMethod='w', headers: dict = None) -> int:
+    def getStaticPage(self, pathToSaveFile, url, writeMethod='w', headers: dict = None) -> int:
         '''Получаем статическую страницу и возвращаем статус ответа от сервера'''
 
         if headers is None:
@@ -109,7 +109,7 @@ class Pars:
             raise RuntimeError(e) from e
 
 
-    def get_dinamic_page(self, url, pathToSaveFile, closeWindow:bool=1, timeSleep:int=2) -> None:
+    def getDinamicPage(self, url, pathToSaveFile, closeWindow:bool=1, timeSleep:int=2) -> None:
         '''Получаем динамическую страницу'''
 
         # Устанавливаем опции для Chrome WebDriver
