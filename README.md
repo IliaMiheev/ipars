@@ -118,18 +118,22 @@ c = CsvManager()
 from ipars import CsvManager
 
 c = CsvManager()
+# записываем заголовки
 writer = c.writerow('./data.csv', 'w', ['Количество', 'Цена', 'Итог'])
 
+# записываем данные
 writer = c.writerows('./data.csv', 'a', [
     ["5", "5", "25"],
     ["6", "6", "36"],
     ["7", "7", "49"],
 ])
 
+# получаем строки из таблицы
 rows = c.getRows('./data.csv')
+# выводим строки таблицы
 c.pprint(rows)
 ```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.txt) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
