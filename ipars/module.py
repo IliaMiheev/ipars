@@ -109,7 +109,7 @@ class Pars:
             raise RuntimeError(e) from e
 
 
-    def get_dinamic_page(self, url, pathToSaveFile, closeWindow:bool=1) -> None:
+    def get_dinamic_page(self, url, pathToSaveFile, closeWindow:bool=1, timeSleep:int=2) -> None:
         '''Получаем динамическую страницу'''
 
         # Устанавливаем опции для Chrome WebDriver
@@ -126,7 +126,7 @@ class Pars:
                 # Прокручиваем до низа страницы
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 # Ждем загрузки страницы
-                sleep(2)
+                sleep(timeSleep)
                 # Вычисляем новую высоту страницы
                 new_height = driver.execute_script("return document.body.scrollHeight")
                 if new_height == last_height:
