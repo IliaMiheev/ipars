@@ -7,60 +7,86 @@ import requests
 import json
 import csv
 
+
 class CsvManager:
     '''Класс для работы с csv файлами во время парсинга'''
 
-    def __init__(self, newline:str='', encoding:str='utf8', delimiter:str=';'):
-        '''Конструктор'''
+    def __init__(self, newline: str = '', encoding: str = 'utf8', delimiter: str = ';'):
+        '''Конструктор
+        
+        newline: новая строка в csv файле
+        encoding: кодировка открываемого файла
+        delimiter: разделитель данных в csv файле'''
         self.newline = newline
         self.encoding = encoding
         self.delimiter = delimiter
-    
-    def pprint(self, data:any):
+
+    def pprint(self, data: any) -> None:
+        '''Выводим данные в удобочитаемом виде
+
+        data: данные которые надо вывести'''
         pprint(data)
 
-    def writerow(self, file_path:str, mode:str, row:list):
-        '''Записываем строку в csv файл'''
-        with open(file_path, mode=mode, newline=self.newline, encoding=self.encoding) as file:
+    def writerow(self, filePath: str, mode: str, row: list) -> None:
+        '''Записываем строку в csv файл
+        
+        filePath: путь до csv файла
+        mode (w/a): метод открытия файла
+        row: список записываемых данных'''
+        with open(filePath, mode=mode, newline=self.newline, encoding=self.encoding) as file:
             writer = csv.writer(file, delimiter=self.delimiter)
             writer.writerow(row)
-    
-    def writerows(self, file_path:str, mode:str, row:list):
-        '''Записываем строки в csv файл'''
-        with open(file_path, mode=mode, newline=self.newline, encoding=self.encoding) as file:
+
+    def writerows(self, filePath: str, mode: str, row: list) -> None:
+        '''Записываем строки в csv файл
+        
+        filePath: путь до csv файла
+        mode (w/a): метод открытия файла
+        row: список записываемых данных'''
+        with open(filePath, mode=mode, newline=self.newline, encoding=self.encoding) as file:
             writer = csv.writer(file, delimiter=self.delimiter)
             writer.writerows(row)
 
-    def getRows(self, file_path:str):
-        '''Возвращает строки файла'''
+    def getRows(self, filePath: str) -> list:
+        '''Возвращает строки файла
+        
+        filePath: путь до csv файла'''
         userRows = []
-
-        with open(file_path, mode='r', newline=self.newline, encoding=self.encoding) as csvfile:
-            csv_reader = csv.reader(csvfile, delimiter=self.delimiter)
-        
-            for row in csv_reader:
+        with open(filePath, mode='r', newline=self.newline, encoding=self.encoding) as csvfile:
+            csvReader = csv.reader(csvfile, delimiter=self.delimiter)
+            for row in csvReader:
                 userRows.append(row)
-        
         return userRows
 
-class JsonManager:
-    '''Модуль для работы с json файлами'''
 
-    def __init__(self, encoding:str='utf8'):
+class JsonManager:
+    '''Класс для работы с json файлами во время парсинга'''
+
+    def __init__(self, encoding: str = 'utf8'):
+        '''Конструктор
+        
+        encoding: кодировка открываемого файла'''
         self.encoding = encoding
 
-    def pprint(self, data:any):
+    def pprint(self, data: any) -> None:
+        '''Выводим данные в удобочитаемом виде
+
+        data: данные которые надо вывести'''
         pprint(data)
 
-    def load(self, pathToJsonFile:str):
-        '''Получаем данные из json файла'''
+    def load(self, pathToJsonFile: str) -> json:
+        '''Получаем данные из json файла
+        
+        pathToJsonFile: путь до json файла'''
         with open(pathToJsonFile, encoding=self.encoding) as jsonFile:
             src = json.load(jsonFile)
-        return src 
+        return src
 
-
-    def dump(self, pathToJsonFile:str, data:any):
-        '''Записываем данные в json файл'''
+    def dump(self, pathToJsonFile: str, data: any) -> None:
+        '''Записываем данные в json файл
+        
+        pathToJsonFile: путь до json файла
+        data: данные которые надо записать'''
         with open(pathToJsonFile, 'w', encoding=self.encoding) as jsonFile:
             json.dump(data, jsonFile, indent=4, ensure_ascii=0)
 
@@ -68,16 +94,24 @@ class JsonManager:
 class Pars:
     '''Модуль для работы с запросами и HTML файлами во время парсинга'''
 
-    def returnBs4Object(self, pathToFile, myEncoding:str='utf8', parser:str='lxml'):
-        '''Возвращаем объект beautifulsoup'''
-        with open(pathToFile, encoding=myEncoding) as file:
+    def returnBs4Object(self, pathToFile: str, encoding: str = 'utf8', parser: str = 'lxml') -> bs4Object:
+        '''Возвращаем объект beautifulsoup
+        
+        pathToFile: путь до html файла
+        encoding: кодировка открытия html файла
+        parser: парсер, который будет использоваться для работы'''
+        with open(pathToFile, encoding=encoding) as file:
             src = file.read()
         soup = BeautifulSoup(src, parser)
         return soup
 
-
-    def getStaticPage(self, pathToSaveFile, url, writeMethod='w', headers: dict = None) -> int:
-        '''Получаем статическую страницу и возвращаем статус ответа от сервера'''
+    def getStaticPage(self, pathToSaveFile: str, url: str, writeMethod: str = 'w', headers: dict = None) -> int:
+        '''Получаем статическую страницу и возвращаем статус ответа от сервера
+        
+        pathToSaveFile: путь, куда сохранится полученный файл
+        url: ссылка на данные
+        writeMethod: метод записи данных в файл. "W" записывает текст, "WB" — байты
+        headers: заголовки запроса к серверу'''
 
         if headers is None:
             headers = {
@@ -103,14 +137,18 @@ class Pars:
 
             return req.status_code  # Возвращаем статус ответа от сервера
 
-        except requests.exceptions.HTTPError as http_err:
-            raise RuntimeError(f"HTTP ошибка: {http_err}") from http_err
+        except requests.exceptions.HTTPError as httpErr:
+            raise RuntimeError(f"HTTP ошибка: {httpErr}") from http_err
         except Exception as e:
             raise RuntimeError(e) from e
 
-
-    def getDinamicPage(self, url, pathToSaveFile, closeWindow:bool=1, timeSleep:int=2) -> None:
-        '''Получаем динамическую страницу'''
+    def getDinamicPage(self, pathToSaveFile: str, url: str, closeWindow: bool = 1, timeSleep: int = 2) -> None:
+        '''Получаем динамическую страницу
+        
+        pathToSaveFile: путь, куда сохранится полученный файл
+        url: ссылка на данные
+        closeWindow (0/1): если указана единица, то браузер открывается в фоновом режиме, 0 — открывается как обычное приложение
+        timeSleep: время ожидания браузера перед тем как скролить страницу дальше'''
 
         # Устанавливаем опции для Chrome WebDriver
         options = Options()
@@ -121,19 +159,19 @@ class Pars:
         with webdriver.Chrome(options=options) as driver:
             driver.get(url)
             # Прокручиваем страницу до самого низа
-            last_height = driver.execute_script("return document.body.scrollHeight")
+            lastHeight = driver.execute_script("return document.body.scrollHeight")
             while True:
                 # Прокручиваем до низа страницы
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 # Ждем загрузки страницы
                 sleep(timeSleep)
                 # Вычисляем новую высоту страницы
-                new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height:
+                newHeight = driver.execute_script("return document.body.scrollHeight")
+                if newHeight == lastHeight:
                     break
-                last_height = new_height
+                lastHeight = newHeight
             # Получаем HTML-код страницы
-            html_content = driver.page_source
+            htmlContent = driver.page_source
             # Сохраняем HTML-код в файл
             with open(pathToSaveFile, "w", encoding="utf-8") as file:
-                file.write(html_content)
+                file.write(htmlContent)
