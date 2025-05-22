@@ -13,7 +13,7 @@ class CsvManager:
 
     def __init__(self, newline: str = '', encoding: str = 'utf8', delimiter: str = ';'):
         '''Конструктор
-        
+
         newline: новая строка в csv файле
         encoding: кодировка открываемого файла
         delimiter: разделитель данных в csv файле'''
@@ -29,7 +29,7 @@ class CsvManager:
 
     def writerow(self, filePath: str, mode: str, row: list) -> None:
         '''Записываем строку в csv файл
-        
+
         filePath: путь до csv файла
         mode (w/a): метод открытия файла
         row: список записываемых данных'''
@@ -39,7 +39,7 @@ class CsvManager:
 
     def writerows(self, filePath: str, mode: str, row: list) -> None:
         '''Записываем строки в csv файл
-        
+
         filePath: путь до csv файла
         mode (w/a): метод открытия файла
         row: список записываемых данных'''
@@ -49,7 +49,7 @@ class CsvManager:
 
     def getRows(self, filePath: str) -> list:
         '''Возвращает строки файла
-        
+
         filePath: путь до csv файла'''
         userRows = []
         with open(filePath, mode='r', newline=self.newline, encoding=self.encoding) as csvfile:
@@ -64,7 +64,7 @@ class JsonManager:
 
     def __init__(self, encoding: str = 'utf8'):
         '''Конструктор
-        
+
         encoding: кодировка открываемого файла'''
         self.encoding = encoding
 
@@ -76,7 +76,7 @@ class JsonManager:
 
     def load(self, pathToJsonFile: str) -> json:
         '''Получаем данные из json файла
-        
+
         pathToJsonFile: путь до json файла'''
         with open(pathToJsonFile, encoding=self.encoding) as jsonFile:
             src = json.load(jsonFile)
@@ -84,7 +84,7 @@ class JsonManager:
 
     def dump(self, pathToJsonFile: str, data: any) -> None:
         '''Записываем данные в json файл
-        
+
         pathToJsonFile: путь до json файла
         data: данные которые надо записать'''
         with open(pathToJsonFile, 'w', encoding=self.encoding) as jsonFile:
@@ -92,11 +92,11 @@ class JsonManager:
 
 
 class Pars:
-    '''Модуль для работы с запросами и HTML файлами во время парсинга'''
+    '''Модуль для работы с запросами и bs4'''
 
-    def returnBs4Object(self, pathToFile: str, encoding: str = 'utf8', parser: str = 'lxml') -> bs4Object:
+    def returnBs4Object(self, pathToFile: str, encoding: str = 'utf8', parser: str = 'lxml'):
         '''Возвращаем объект beautifulsoup
-        
+
         pathToFile: путь до html файла
         encoding: кодировка открытия html файла
         parser: парсер, который будет использоваться для работы'''
@@ -105,9 +105,51 @@ class Pars:
         soup = BeautifulSoup(src, parser)
         return soup
 
+    def getTexts(self, arr: list, needFix: bool = 0) -> list:
+        '''Возвращаем текст из элементов bs4
+        
+        arr: список объектов bs4 из которых будет извлекаться текст
+        needFix (0/1): если этот параметр установлен как True, то из текста будут удалены \\n, \\t и пробелы с концов'''
+        result = []
+        for item in arr:
+            data = item.text
+            if needFix:
+                data = data.strip()
+                data = data.replace('\t', '')
+                data = data.replace('\n', '')
+
+            if not data:
+                continue
+            result.append(data)
+
+        if not result:
+            return None
+        return result
+
+    def getAttributes(self, arr: list, att: str) -> list:
+        '''Возвращаем список значений атрибутов
+        
+        arr: список объектов bs4 из которых будет извлекаться атрибут
+        att: строка с названием атрибута по которому будет осуществляться поиск'''
+        result = []
+        for item in arr:
+            data = item.get(att)
+            if data is not None:
+                result.append(item.get(att))
+
+        if not result:
+            return None
+        return result
+
+    def pprint(self, data: any) -> None:
+        '''Выводим данные в удобочитаемом виде
+
+        data: данные которые надо вывести'''
+        pprint(data)
+
     def getStaticPage(self, pathToSaveFile: str, url: str, writeMethod: str = 'w', headers: dict = None) -> int:
         '''Получаем статическую страницу и возвращаем статус ответа от сервера
-        
+
         pathToSaveFile: путь, куда сохранится полученный файл
         url: ссылка на данные
         writeMethod: метод записи данных в файл. "W" записывает текст, "WB" — байты
@@ -128,6 +170,7 @@ class Pars:
                 src = req.text
                 with open(pathToSaveFile, 'w', encoding='utf-8') as file:
                     file.write(src)
+
             elif writeMethod == 'wb':
                 src = req.content
                 with open(pathToSaveFile, 'wb') as file:
@@ -144,7 +187,7 @@ class Pars:
 
     def getDinamicPage(self, pathToSaveFile: str, url: str, closeWindow: bool = 1, timeSleep: int = 2) -> None:
         '''Получаем динамическую страницу
-        
+
         pathToSaveFile: путь, куда сохранится полученный файл
         url: ссылка на данные
         closeWindow (0/1): если указана единица, то браузер открывается в фоновом режиме, 0 — открывается как обычное приложение
@@ -160,6 +203,7 @@ class Pars:
             driver.get(url)
             # Прокручиваем страницу до самого низа
             lastHeight = driver.execute_script("return document.body.scrollHeight")
+
             while True:
                 # Прокручиваем до низа страницы
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -170,6 +214,7 @@ class Pars:
                 if newHeight == lastHeight:
                     break
                 lastHeight = newHeight
+
             # Получаем HTML-код страницы
             htmlContent = driver.page_source
             # Сохраняем HTML-код в файл
