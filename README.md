@@ -15,9 +15,8 @@ pip install ipars
 Класс Pars не принимает никаких данных для конструкторов.
 
 ```python
-# Импортируем класс
 from ipars import Pars
-# Создаём объект класса
+
 p = Pars()
 ```
 
@@ -42,10 +41,10 @@ from ipars import Pars
 p = Pars()
 
 # Заголовки для запроса
-headers ={
+headers = {
     "Accept": "*/*",
     "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1"
-    }
+}
 p.getStaticPage('./index.html', 'https://google.com', headers=headers)
 
 # Получаем объект beautifulsoup из полученной страницы
@@ -53,8 +52,11 @@ soup = p.returnBs4Object('./index.html')
 
 # Используем методы beautifulsoup
 allImage = soup.find_all('img')
+print('-----начало-----')
 for image in allImage:
-    print(image.get('src'))
+    p.pprint(image.get('src'))
+print('-----конец------')
+
 ```
 
 Пример скачивания фотографии:
@@ -110,8 +112,10 @@ j = JsonManager()
 ```py
 from ipars import JsonManager
 j = JsonManager()
+
 # Записываем данные
 j.dump('./data.json', [1, 2, 3, 4, 5, 6, 7])
+
 # Получаем данные
 data = j.load('./data.json')
 j.pprint(data) # [1, 2, 3, 4, 5, 6, 7]
@@ -140,8 +144,8 @@ c = CsvManager()
 
 ```py
 from ipars import CsvManager
-
 c = CsvManager()
+
 # записываем заголовки
 writer = c.writerow('./data.csv', 'w', ['Количество', 'Цена', 'Итог'])
 
@@ -154,10 +158,7 @@ writer = c.writerows('./data.csv', 'a', [
 
 # получаем строки из таблицы
 rows = c.getRows('./data.csv')
+
 # выводим строки таблицы
 c.pprint(rows)
 ```
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
