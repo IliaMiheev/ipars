@@ -2,3 +2,7 @@ __pycache__
 *.html
 *.csv
 *.json
+
+uploadToPypi.py
+ideas.md
+*copy*
