@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 from pprint import pprint
 from time import sleep
 import requests
-from os import path, mkdir
+from os import mkdir
+from os.path import exists
 
 class Pars:
     '''Модуль для работы с запросами и bs4'''
@@ -13,7 +14,7 @@ class Pars:
         '''Создаёт папку если её ещё нет
         
         nameDir: название папки которая будет создана'''
-        if not path.exists(nameDir):
+        if not exists(nameDir):
             mkdir(nameDir)
 
     def returnBs4Object(self, pathToFile: str, encoding: str = 'utf8', parser: str = 'lxml'):
