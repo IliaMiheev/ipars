@@ -1,4 +1,4 @@
-from .parsManagerCode import Pars
-from .jsonManagerCode import JsonManager
-from .csvManagerCode import CsvManager
+from .ParsManagerCode import Pars
+from .JsonManagerCode import JsonManager
+from .CsvManagerCode import CsvManager
 from .ProgressBarCode import ProgressBarManager
