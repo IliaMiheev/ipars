@@ -3,6 +3,7 @@ __pycache__
 *.csv
 *.json
 
-uploadToPypi.py
 ideas.md
 *copy*
+test/
+venv/
