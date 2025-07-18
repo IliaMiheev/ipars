@@ -108,11 +108,28 @@ class Pars:
         except Exception as e:
             raise RuntimeError(e) from e
 
+    def __scrollAndSave(self, driver, timeSleep, pathToSaveFile):
+        # Прокручиваем страницу до самого низа
+        lastHeight = driver.execute_script("return document.body.scrollHeight")
+        while True:
+            # Прокручиваем до низа страницы
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            # Ждем загрузки страницы
+            sleep(timeSleep)
+            # Вычисляем новую высоту страницы
+            newHeight = driver.execute_script("return document.body.scrollHeight")
+            if newHeight == lastHeight:
+                break
+            lastHeight = newHeight
+        htmlContent = driver.page_source
+        with open(pathToSaveFile, "w", encoding="utf-8") as file:
+            file.write(htmlContent)
+
     def getDinamicPage(self, pathToSaveFile: str, url: str, closeWindow: bool = 1, timeSleep: int = 2) -> None:
         '''Получаем динамическую страницу
 
         pathToSaveFile: путь, куда сохранится полученный файл
-        url: ссылка на данные
+        url: ссылка на сайт
         closeWindow (0/1): если указана единица, то браузер открывается в фоновом режиме, 0 — открывается как обычное приложение
         timeSleep: время ожидания браузера перед тем как скролить страницу дальше'''
 
@@ -124,22 +141,17 @@ class Pars:
         # открываем браузер
         with webdriver.Chrome(options=options) as driver:
             driver.get(url)
-            # Прокручиваем страницу до самого низа
-            lastHeight = driver.execute_script("return document.body.scrollHeight")
+            self.__scrollAndSave(driver, timeSleep, pathToSaveFile)
 
-            while True:
-                # Прокручиваем до низа страницы
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                # Ждем загрузки страницы
-                sleep(timeSleep)
-                # Вычисляем новую высоту страницы
-                newHeight = driver.execute_script("return document.body.scrollHeight")
-                if newHeight == lastHeight:
-                    break
-                lastHeight = newHeight
+    def gpsa(self, pathToSaveFile: str, url: str, timeSleep=2):
+        '''Получаем страницу в полуавтоматическом режиме 
+        gpsa - get page semi-automatically
 
-            # Получаем HTML-код страницы
-            htmlContent = driver.page_source
-            # Сохраняем HTML-код в файл
-            with open(pathToSaveFile, "w", encoding="utf-8") as file:
-                file.write(htmlContent)
+        pathToSaveFile: путь, куда сохранится полученный файл
+        url: ссылка на сайт
+        timeSleep: время ожидания браузера перед тем как скролить страницу дальше'''
+
+        with webdriver.Chrome() as driver:
+            driver.get(url)
+            a = input('Нажми ENTER когда закончишь')
+            self.__scrollAndSave(driver, timeSleep, pathToSaveFile)
