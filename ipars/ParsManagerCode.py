@@ -1,4 +1,6 @@
 from selenium.webdriver.chrome.options import Options
+from random_user_agent.user_agent import UserAgent
+from random_user_agent.params import SoftwareName, OperatingSystem
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from pprint import pprint
@@ -79,9 +81,26 @@ class Pars:
         headers: заголовки запроса к серверу'''
 
         if headers is None:
+            # Получаем случайный user agent
+            software_names = [
+                SoftwareName.FIREFOX.value, 
+                SoftwareName.CHROME.value, 
+                SoftwareName.EDGE.value, 
+                SoftwareName.SAFARI.value, 
+                SoftwareName.YANDEX.value, 
+                ]
+            operating_systems = [
+                OperatingSystem.WINDOWS.value, 
+                OperatingSystem.LINUX.value,
+                OperatingSystem.IOS.value,
+                OperatingSystem.MACOS.value, 
+                ]   
+            user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=10)
+            user_agent = user_agent_rotator.get_random_user_agent()
+
             headers = {
                 "Accept": "*/*",
-                "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1"
+                "User-Agent": user_agent
             }
 
         try:
