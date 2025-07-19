@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ipars',
-    version='3.5.0',
+    version='3.5.1',
     description='Библиотека для работы с файлами во время парсинга',
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
@@ -15,6 +15,7 @@ setup(
         'selenium',
         'lxml',
         'bs4',
-        'progress'
+        'progress',
+        'random_user_agent',
     ],
 )
