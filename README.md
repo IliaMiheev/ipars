@@ -10,6 +10,20 @@
 pip install ipars
 ```
 
+- [Работа с Pars](#работа-с-pars)
+  - [Коротко о методах Pars](#коротко-о-методах-pars)
+  - [Пример парсера с использованием ipars](#пример-парсера-с-использованием-ipars)
+  - [Пример использования методов getAttributes и getTexts](#пример-использования-методов-getattributes-и-gettexts)
+- [Работа с JsonManager](#работа-с-jsonmanager)
+  - [Коротко о методах JsonManager](#коротко-о-методах-jsonmanager)
+  - [Пример использования JsonManager](#пример-использования-jsonmanager)
+- [Работа с CsvManager](#работа-с-csvmanager)
+  - [Коротко о методах CsvManager](#коротко-о-методах-csvmanager)
+  - [Пример использования CsvManager](#пример-использования-csvmanager)
+- [Работа с ProgressBarManager](#работа-с-progressbarmanager)
+  - [Коротко о методах ProgressBarManager](#коротко-о-методах-progressbarmanager)
+  - [Пример использования ProgressBarManager](#пример-использования-progressbarmanager)
+
 ## Работа с Pars
 
 Класс Pars не принимает никаких данных для конструкторов.
@@ -20,7 +34,7 @@ from ipars import Pars
 p = Pars()
 ```
 
-### Коротко о методах:
+### Коротко о методах Pars:
 
 1. Метод **getStaticPage** принимает url страницы, путь, по которому сохранится страница, метод записи и заголовки запроса. Метод записи «wb» используется для сохранения картинок, по умолчанию writeMethod установлен как «w», что используется для html-страниц. Если заголовки запросов не указаны, то будут использоваться заголовки со случайным user-agent. Метод возвращает статус ответа сайта, что должно использоваться для введения проверок
 
@@ -38,7 +52,7 @@ p = Pars()
 
 8. Метод **mkdir** используется для создания папки с именем _nameDir_ если она ещё не существует
 
-Пример парсера с использованием ipars:
+### Пример парсера с использованием ipars:
 
 ```py
 # О классе ProgressBarManager читай ниже
@@ -49,7 +63,7 @@ nameFile = 'index.html'
 # Получаем html страницу
 p.getDinamicPage(nameFile, 'https://duckduckgo.com/?q=теплица+социальных+технологий+youtube&iar=videos&atb=v454-1', closeWindow=0)
 
-# Получаем объект BautifullSoup 
+# Получаем объект BautifullSoup
 soup = p.returnBs4Object(nameFile)
 
 # Находим все карточки ответов
@@ -77,7 +91,7 @@ for index, url in enumerate(allSrc):
 bar.finish()
 ```
 
-Пример использование методов _getAttributes_ и _getTexts_
+### Пример использования методов _getAttributes_ и _getTexts_
 
 ```py
 from ipars import Pars
@@ -104,13 +118,15 @@ from ipars import JsonManager
 j = JsonManager()
 ```
 
-### Коротко о методах
+### Коротко о методах JsonManager
 
 1. Метод **load** используется для получения данных из json-файла по указанному пути
 
 2. Метод **dump** используется для записи данных в json-файл. Принимает путь до файла и данные для записи
 
 3. Метод **pprint** такой же как и у Pars
+
+### Пример использования JsonManager
 
 ```py
 from ipars import JsonManager
@@ -135,7 +151,7 @@ from ipars import CsvManager
 c = CsvManager()
 ```
 
-### Коротко о методах
+### Коротко о методах CsvManager
 
 1. Метод **writerow** записывает строку с csv файл. Метод принимает путь до csv файла, метод записи и список данных которые будут записанн в строку файла
 
@@ -144,6 +160,8 @@ c = CsvManager()
 3. Метод **getRows** используется для получения списка строк в csv файле. Метод принимает путь до файла откуда будут получены строки
 
 4. Метод **pprint** такой же как и у Pars
+
+### Пример использования CsvManager
 
 ```py
 from ipars import CsvManager
@@ -183,11 +201,13 @@ from ipars import ProgressBarManager
 bar = ProgressBarManager(100) # Здесь max установлен как 100
 ```
 
-### Коротко о методах
+### Коротко о методах ProgressBarManager
 
 1. Метод **next** запускает следущую итерацию прогресс-бара
 
 2. Метод **finish** завершает работу прогресс-бара
+
+### Пример использования ProgressBarManager
 
 ```py
 # Импортируем библиотеки
@@ -213,6 +233,7 @@ bar = ProgressBarManager(
     maxValue,
     message='Процесс скачивания',
     color='red',
+    fill='*',
     width=50
 )
 
@@ -224,3 +245,7 @@ for _ in range(maxValue):
 # Выключаем прогресс-бар
 bar.finish()
 ```
+
+Если ты дочитал(-а) документацию до конца, то получай пожизненный запас здоровья❤. Помни, оно у тебя одно.
+
++999999 HP
