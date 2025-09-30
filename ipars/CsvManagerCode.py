@@ -1,5 +1,6 @@
 import csv
 from pprint import pprint
+from cerberus import Validator
 
 class CsvManager:
     '''Класс для работы с csv файлами во время парсинга'''
@@ -10,6 +11,15 @@ class CsvManager:
         newline: новая строка в csv файле
         encoding: кодировка открываемого файла
         delimiter: разделитель данных в csv файле'''
+        schema = {
+            'newline': {'type': 'string'},
+            'encoding': {'type': 'string'},
+            'delimiter': {'type': 'string'},
+            }
+        v = Validator(schema)
+        if not v.validate({'newline': newline, 'encoding': encoding, 'delimiter': delimiter}):
+            raise ValueError(f'Ошибка: {v.errors}')
+
         self.newline = newline
         self.encoding = encoding
         self.delimiter = delimiter
@@ -26,6 +36,15 @@ class CsvManager:
         filePath: путь до csv файла
         mode (w/a): метод открытия файла
         row: список записываемых данных'''
+        schema = {
+            'filePath': {'type': 'string'},
+            'mode': {'type': 'string', 'allowed': ['w', 'a'] },
+            'row': {'type': 'list'},
+        }
+        v = Validator(schema)
+        if not v.validate({'filePath': filePath, 'mode':mode, 'row':row}):
+            raise ValueError(f'Ошибка: {v.errors}')
+
         with open(filePath, mode=mode, newline=self.newline, encoding=self.encoding) as file:
             writer = csv.writer(file, delimiter=self.delimiter)
             writer.writerow(row)
@@ -36,6 +55,15 @@ class CsvManager:
         filePath: путь до csv файла
         mode (w/a): метод открытия файла
         row: список записываемых данных'''
+        schema = {
+            'filePath': {'type': 'string'},
+            'mode': {'type': 'string', 'allowed': ['w', 'a'] },
+            'row': {'type': 'list'},
+        }
+        v = Validator(schema)
+        if not v.validate({'filePath': filePath, 'mode':mode, 'row':row}):
+            raise ValueError(f'Ошибка: {v.errors}')
+
         with open(filePath, mode=mode, newline=self.newline, encoding=self.encoding) as file:
             writer = csv.writer(file, delimiter=self.delimiter)
             writer.writerows(row)
