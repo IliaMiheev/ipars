@@ -8,6 +8,7 @@ from time import sleep
 import requests
 from os import mkdir
 from os.path import exists
+from cerberus import Validator
 
 class Pars:
     '''Модуль для работы с запросами и bs4'''
@@ -16,6 +17,10 @@ class Pars:
         '''Создаёт папку если её ещё нет
         
         nameDir: название папки которая будет создана'''
+        schema = {'nameDir': {'type': 'string'}}
+        v = Validator(schema)
+        if not v.validate({'nameDir': nameDir}):
+            raise ValueError(v.errors)
         if not exists(nameDir):
             mkdir(nameDir)
 
@@ -25,6 +30,16 @@ class Pars:
         pathToFile: путь до html файла
         encoding: кодировка открытия html файла
         parser: парсер, который будет использоваться для работы'''
+
+        schema = {
+            'pathToFile': {'type': 'string'},
+            'encoding': {'type': 'string'},
+            'parser': {'type': 'string'},
+            }
+        v = Validator(schema)
+        if not v.validate({'pathToFile': pathToFile, 'encoding': encoding, 'parser': parser}):
+            raise ValueError(v.errors)
+
         with open(pathToFile, encoding=encoding) as file:
             src = file.read()
         soup = BeautifulSoup(src, parser)
@@ -35,6 +50,15 @@ class Pars:
         
         arr: список объектов bs4 из которых будет извлекаться текст
         needFix (0/1): если этот параметр установлен как True, то из текста будут удалены \\n, \\t и пробелы с концов'''
+
+        schema = {
+            'arr': {'type': 'list'},
+            'needFix': {'type': 'boolean'},
+            }
+        v = Validator(schema)
+        if not v.validate({'arr': arr, 'needFix': needFix}):
+            raise ValueError(v.errors)
+
         result = []
         for item in arr:
             data = item.text
@@ -150,7 +174,18 @@ class Pars:
         pathToSaveFile: путь, куда сохранится полученный файл
         url: ссылка на сайт
         closeWindow (0/1): если указана единица, то браузер открывается в фоновом режиме, 0 — открывается как обычное приложение
-        timeSleep: время ожидания браузера перед тем как скролить страницу дальше'''
+        timeSleep: время ожидания в секундах браузера перед тем как скролить страницу дальше'''
+
+        schema = {
+            'pathToSaveFile': {'type': 'string'},
+            'url': {'type': 'string'},
+            'closeWindow': {'type': 'boolean'},
+            'timeSleep': {'type': 'integer', 'min': 2},
+            }
+        v = Validator(schema)
+        if not v.validate({'pathToSaveFile': pathToSaveFile, 'url': url, 'closeWindow': closeWindow, 'timeSleep': timeSleep}):
+            raise ValueError(v.errors)
+
 
         # Устанавливаем опции для Chrome WebDriver
         options = Options()
