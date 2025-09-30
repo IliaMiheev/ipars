@@ -1,5 +1,6 @@
 import json
 from pprint import pprint
+from cerberus import Validator
 
 class JsonManager:
     '''Класс для работы с json файлами во время парсинга'''
@@ -8,6 +9,13 @@ class JsonManager:
         '''Конструктор
 
         encoding: кодировка открываемого файла'''
+        schema = {
+            'encoding': {'type': 'string'}
+        }
+        v = Validator(schema)
+        if not v.validate({'encoding': encoding}):
+            raise ValueError(v.errors)
+
         self.encoding = encoding
 
     def pprint(self, data: any) -> None:
@@ -20,6 +28,14 @@ class JsonManager:
         '''Получаем данные из json файла
 
         pathToJsonFile: путь до json файла'''
+
+        schema = {
+            'pathToJsonFile': {'type': 'string'}
+        }
+        v = Validator(schema)
+        if not v.validate({'pathToJsonFile': pathToJsonFile}):
+            raise ValueError(v.errors)
+
         with open(pathToJsonFile, encoding=self.encoding) as jsonFile:
             src = json.load(jsonFile)
         return src
@@ -29,5 +45,13 @@ class JsonManager:
 
         pathToJsonFile: путь до json файла
         data: данные которые надо записать'''
+
+        schema = {
+            'pathToJsonFile': {'type': 'string'}
+        }
+        v = Validator(schema)
+        if not v.validate({'pathToJsonFile': pathToJsonFile}):
+            raise ValueError(v.errors)
+
         with open(pathToJsonFile, 'w', encoding=self.encoding) as jsonFile:
             json.dump(data, jsonFile, indent=4, ensure_ascii=0)
