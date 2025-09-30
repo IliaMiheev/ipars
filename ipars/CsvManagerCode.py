@@ -18,7 +18,7 @@ class CsvManager:
             }
         v = Validator(schema)
         if not v.validate({'newline': newline, 'encoding': encoding, 'delimiter': delimiter}):
-            raise ValueError(f'Ошибка: {v.errors}')
+            raise ValueError(v.errors)
 
         self.newline = newline
         self.encoding = encoding
@@ -43,7 +43,7 @@ class CsvManager:
         }
         v = Validator(schema)
         if not v.validate({'filePath': filePath, 'mode':mode, 'row':row}):
-            raise ValueError(f'Ошибка: {v.errors}')
+            raise ValueError(v.errors)
 
         with open(filePath, mode=mode, newline=self.newline, encoding=self.encoding) as file:
             writer = csv.writer(file, delimiter=self.delimiter)
@@ -62,7 +62,7 @@ class CsvManager:
         }
         v = Validator(schema)
         if not v.validate({'filePath': filePath, 'mode':mode, 'row':row}):
-            raise ValueError(f'Ошибка: {v.errors}')
+            raise ValueError(v.errors)
 
         with open(filePath, mode=mode, newline=self.newline, encoding=self.encoding) as file:
             writer = csv.writer(file, delimiter=self.delimiter)
