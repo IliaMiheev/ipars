@@ -11,18 +11,21 @@ pip install ipars
 ```
 
 - [Работа с Pars](#работа-с-pars)
-  - [Коротко о методах Pars](#коротко-о-методах-pars)
+  - [Коротко о методах](#коротко-о-методах-pars)
   - [Пример парсера с использованием ipars](#пример-парсера-с-использованием-ipars)
   - [Пример использования методов getAttributes и getTexts](#пример-использования-методов-getattributes-и-gettexts)
 - [Работа с JsonManager](#работа-с-jsonmanager)
-  - [Коротко о методах JsonManager](#коротко-о-методах-jsonmanager)
-  - [Пример использования JsonManager](#пример-использования-jsonmanager)
+  - [Коротко о методах](#коротко-о-методах-jsonmanager)
+  - [Пример использования](#пример-использования-jsonmanager)
 - [Работа с CsvManager](#работа-с-csvmanager)
-  - [Коротко о методах CsvManager](#коротко-о-методах-csvmanager)
-  - [Пример использования CsvManager](#пример-использования-csvmanager)
+  - [Коротко о методах](#коротко-о-методах-csvmanager)
+  - [Пример использования](#пример-использования-csvmanager)
 - [Работа с ProgressBarManager](#работа-с-progressbarmanager)
-  - [Коротко о методах ProgressBarManager](#коротко-о-методах-progressbarmanager)
-  - [Пример использования ProgressBarManager](#пример-использования-progressbarmanager)
+  - [Коротко о методах](#коротко-о-методах-progressbarmanager)
+  - [Пример использования](#пример-использования-progressbarmanager)
+- [Работа с TimerManager](#работа-с-timermanager)
+  - [Коротко о методах](#коротко-о-методах-timermanager)
+  - [Пример использования](#пример-использования-timermanager)
 
 ## Работа с Pars
 
