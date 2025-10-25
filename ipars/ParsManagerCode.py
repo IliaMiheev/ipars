@@ -168,7 +168,7 @@ class Pars:
         with open(pathToSaveFile, "w", encoding="utf-8") as file:
             file.write(htmlContent)
 
-    def getDinamicPage(self, pathToSaveFile: str, url: str, closeWindow: bool = 1, timeSleep: int = 2) -> None:
+    def getDynamicPage(self, pathToSaveFile: str, url: str, closeWindow: bool = 1, timeSleep: int = 2) -> None:
         '''Получаем динамическую страницу
 
         pathToSaveFile: путь, куда сохранится полученный файл
