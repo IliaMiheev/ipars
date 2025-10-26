@@ -1,6 +1,6 @@
 ## Библиотека для работы с файлами во время парсинга
 
-Во время парсинга часто приходится скачивать html-страницы, работать с json- и csv-файлами. Эта библиотека призвана облегчить написание кода для такого рода задач, а так же предоставляет ряд дополнительных возможностей.
+Во время парсинга часто приходится скачивать html-страницы, работать с json и csv-файлами. Эта библиотека призвана облегчить написание кода для такого рода задач, а так же предоставляет ряд дополнительных возможностей.
 
 Более удобная версия документации на сайте ([ru](https://iliamiheev.github.io/ipars-doc/#/./home), [en](https://iliamiheev.github.io/ipars-doc/#/./pages/en/README_EN))
 
@@ -81,7 +81,7 @@ p = Pars()
 nameFile = 'index.html'
 
 # Получаем html страницу
-p.getDinamicPage(nameFile, 'https://duckduckgo.com/?q=теплица+социальных+технологий+youtube&iar=videos&atb=v454-1', closeWindow=0)
+p.getDynamicPage(nameFile, 'https://duckduckgo.com/?q=теплица+социальных+технологий+youtube&iar=videos&atb=v454-1', closeWindow=0)
 
 # Получаем объект BautifullSoup
 soup = p.returnBs4Object(nameFile)
