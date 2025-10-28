@@ -186,19 +186,19 @@ c = CsvManager()
 ```py
 from ipars import CsvManager
 c = CsvManager()
-
+nameFile = 'data.csv'
 # записываем заголовки
-writer = c.writerow('./data.csv', 'w', ['Количество', 'Цена', 'Итог'])
+c.writerow(nameFile, 'w', ['Количество', 'Цена', 'Итог'])
 
 # записываем данные
-writer = c.writerows('./data.csv', 'a', [
+c.writerows(nameFile, 'a', [
     ["5", "5", "25"],
     ["6", "6", "36"],
     ["7", "7", "49"],
 ])
 
 # получаем строки из таблицы
-rows = c.getRows('./data.csv')
+rows = c.getRows(nameFile)
 
 # выводим строки таблицы
 c.pprint(rows)
