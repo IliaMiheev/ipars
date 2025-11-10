@@ -168,12 +168,12 @@ class Pars:
         with open(pathToSaveFile, "w", encoding="utf-8") as file:
             file.write(htmlContent)
 
-    def getDynamicPage(self, pathToSaveFile: str, url: str, closeWindow: bool = 1, timeSleep: int = 2) -> None:
+    def getDynamicPage(self, pathToSaveFile: str, url: str, closeWindow: bool = True, timeSleep: int = 2) -> None:
         '''Получаем динамическую страницу
 
         pathToSaveFile: путь, куда сохранится полученный файл
         url: ссылка на сайт
-        closeWindow (0/1): если указана единица, то браузер открывается в фоновом режиме, 0 — открывается как обычное приложение
+        closeWindow (False/True): если указана единица, то браузер открывается в фоновом режиме, 0 — открывается как обычное приложение
         timeSleep: время ожидания в секундах браузера перед тем как скролить страницу дальше'''
 
         schema = {
