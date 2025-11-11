@@ -116,9 +116,10 @@ bar.finish()
 ```py
 from ipars import Pars
 p = Pars()
+nameFile = 'index.html'
 
-p.getStaticPage('./index.html', 'https://google.com')
-soup = p.returnBs4Object('./index.html')
+p.getStaticPage(nameFile, 'https://google.com')
+soup = p.returnBs4Object(nameFile)
 
 allTegA = soup.find_all('a')
 a1 = p.getTexts(allTegA, needFix=1)
@@ -151,12 +152,13 @@ j = JsonManager()
 ```py
 from ipars import JsonManager
 j = JsonManager()
+nameFile = 'data.json'
 
 # Записываем данные
-j.dump('./data.json', [1, 2, 3, 4, 5, 6, 7])
+j.dump(nameFile, [1, 2, 3, 4, 5, 6, 7])
 
 # Получаем данные
-data = j.load('./data.json')
+data = j.load(nameFile)
 j.pprint(data) # [1, 2, 3, 4, 5, 6, 7]
 ```
 
@@ -187,6 +189,7 @@ c = CsvManager()
 from ipars import CsvManager
 c = CsvManager()
 nameFile = 'data.csv'
+
 # записываем заголовки
 c.writerow(nameFile, 'w', ['Количество', 'Цена', 'Итог'])
 
@@ -339,6 +342,6 @@ z.zip_file('./your_file.txt', 'file_archive_maximum.zip')
 z.zip_folder('./your_folder/', 'folder_archive_maximum.zip')
 ```
 
-Если ты дочитал(-а) документацию до конца, то получай пожизненный запас здоровья❤. Помни, оно у тебя одно.
+Если ты дочитал(-а) документацию до конца, то получай пожизненный запас здоровья ❤. Помни, оно у тебя одно.
 
 +999999 HP
