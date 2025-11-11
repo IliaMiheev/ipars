@@ -13,14 +13,19 @@ from cerberus import Validator
 class Pars:
     '''Модуль для работы с запросами и bs4'''
 
+    def __validation(self, schema, expected):
+        v = Validator(schema)
+        if not v.validate(expected):
+            raise ValueError(v.errors)
+
     def mkdir(self, nameDir: str):
         '''Создаёт папку если её ещё нет
         
         nameDir: название папки которая будет создана'''
         schema = {'nameDir': {'type': 'string'}}
-        v = Validator(schema)
-        if not v.validate({'nameDir': nameDir}):
-            raise ValueError(v.errors)
+        expected = {'nameDir': nameDir}
+        self.__validation(schema, expected)
+
         if not exists(nameDir):
             mkdir(nameDir)
 
@@ -36,9 +41,8 @@ class Pars:
             'encoding': {'type': 'string'},
             'parser': {'type': 'string'},
             }
-        v = Validator(schema)
-        if not v.validate({'pathToFile': pathToFile, 'encoding': encoding, 'parser': parser}):
-            raise ValueError(v.errors)
+        expected =  {'pathToFile': pathToFile, 'encoding': encoding, 'parser': parser}
+        sels.__validation(schema, expected)
 
         with open(pathToFile, encoding=encoding) as file:
             src = file.read()
@@ -55,9 +59,8 @@ class Pars:
             'arr': {'type': 'list'},
             'needFix': {'type': 'boolean'},
             }
-        v = Validator(schema)
-        if not v.validate({'arr': arr, 'needFix': needFix}):
-            raise ValueError(v.errors)
+        expected = {'arr': arr, 'needFix': needFix}
+        self.__validation(schema, expected)
 
         result = []
         for item in arr:
@@ -80,6 +83,15 @@ class Pars:
         
         arr: список объектов bs4 из которых будет извлекаться атрибут
         att: строка с названием атрибута по которому будет осуществляться поиск'''
+
+        schema = {
+            'arr': {'type': 'list'},
+            'att': {'type': 'string'}
+        }
+        expected = {'arr': arr, 'att': att}
+        self.__validation(schema, expected)
+
+
         result = []
         for item in arr:
             data = item.get(att)
@@ -97,11 +109,11 @@ class Pars:
         pprint(data)
 
     def getStaticPage(self, pathToSaveFile: str, url: str, writeMethod: str = 'w', headers: dict = None) -> int:
-        '''Получаем статическую страницу и возвращаем статус ответа от сервера
+        '''Сохраняем статическую страницу и возвращаем статус ответа от сервера
 
         pathToSaveFile: путь, куда сохранится полученный файл
         url: ссылка на данные
-        writeMethod: метод записи данных в файл. "W" записывает текст, "WB" — байты
+        writeMethod: метод записи данных в файл. "w" записывает текст, "wb" — байты
         headers: заголовки запроса к серверу'''
 
         if headers is None:
@@ -126,6 +138,17 @@ class Pars:
                 "Accept": "*/*",
                 "User-Agent": user_agent
             }
+
+
+        schema = {
+            'pathToSaveFile': {'type': 'string'},
+            'url': {'type': 'string'},
+            'writeMethod': {'type': 'string', 'allowed': ['w', 'wb']},
+            'headers': {'type': 'dict'},
+        }
+        expected = {'pathToSaveFile': pathToSaveFile, 'att': att, 'writeMethod': writeMethod, 'headers': headers,}
+        self.__validation(schema, expected)
+
 
         try:
             # Отправляем запрос
@@ -182,9 +205,8 @@ class Pars:
             'closeWindow': {'type': 'boolean'},
             'timeSleep': {'type': 'integer', 'min': 2},
             }
-        v = Validator(schema)
-        if not v.validate({'pathToSaveFile': pathToSaveFile, 'url': url, 'closeWindow': closeWindow, 'timeSleep': timeSleep}):
-            raise ValueError(v.errors)
+        expected = {'pathToSaveFile': pathToSaveFile, 'url': url, 'closeWindow': closeWindow, 'timeSleep': timeSleep}
+        self.__validation(schema, expected)
 
 
         # Устанавливаем опции для Chrome WebDriver
@@ -204,6 +226,14 @@ class Pars:
         pathToSaveFile: путь, куда сохранится полученный файл
         url: ссылка на сайт
         timeSleep: время ожидания браузера перед тем как скролить страницу дальше'''
+
+        schema = {
+            'pathToSaveFile': {'type': 'string'},
+            'url': {'type': 'string'},
+            'timeSleep': {'type': 'integer', 'min': 2},
+            }
+        expected = {'pathToSaveFile': pathToSaveFile, 'url': url, 'timeSleep': timeSleep}
+        self.__validation(schema, expected)
 
         with webdriver.Chrome() as driver:
             driver.get(url)
