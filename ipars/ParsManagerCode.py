@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from pprint import pprint
 from time import sleep
 import requests
-from os import mkdir
+from os import mkdir, listdir
 from os.path import exists
 from cerberus import Validator
 
@@ -17,6 +17,14 @@ class Pars:
         v = Validator(schema)
         if not v.validate(expected):
             raise ValueError(v.errors)
+
+    def listdir(self, path: str) -> dict:
+        '''Возвращает список файлов в указанной директории'''
+        schema = {'path': {'type': 'string'}}
+        expected = {'path': path}
+        self.__validation(schema, expected)
+
+        return listdir(path)
 
     def mkdir(self, nameDir: str):
         '''Создаёт папку если её ещё нет
