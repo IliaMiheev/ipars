@@ -170,7 +170,7 @@ class Pars:
             'writeMethod': {'type': 'string', 'allowed': ['w', 'wb']},
             'headers': {'type': 'dict'},
         }
-        expected = {'pathToSaveFile': pathToSaveFile, 'att': att, 'writeMethod': writeMethod, 'headers': headers,}
+        expected = {'pathToSaveFile': pathToSaveFile, 'url': url, 'writeMethod': writeMethod, 'headers': headers,}
         self.__validation(schema, expected)
 
 
