@@ -56,7 +56,7 @@ class Pars:
             'parser': {'type': 'string'},
             }
         expected =  {'pathToFile': pathToFile, 'encoding': encoding, 'parser': parser}
-        sels.__validation(schema, expected)
+        self.__validation(schema, expected)
 
 
         # Открываем файл и возвращаем объяект bs4 на его основе
