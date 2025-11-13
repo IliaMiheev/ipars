@@ -21,15 +21,6 @@ class Pars:
             raise ValueError(v.errors)
 
 
-    def exists(self, path: str) -> dict:
-        '''Возвращает True если указанный файл или папка сущуствует, иначе — False'''
-        schema = {'path': {'type': 'string'}}
-        expected = {'path': path}
-        self.__validation(schema, expected)
-
-        return exists(path)
-
-
     def listdir(self, path: str) -> dict:
         '''Возвращает список файлов в указанной директории'''
         schema = {'path': {'type': 'string'}}
