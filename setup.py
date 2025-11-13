@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ipars',
-    version='3.8.2',
+    version='3.8.3',
     description='Библиотека для работы с файлами во время парсинга',
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
