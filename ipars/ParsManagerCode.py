@@ -75,11 +75,11 @@ class Pars:
         return soup
 
 
-    def getTexts(self, arr: list, needFix: bool = false) -> list:
+    def getTexts(self, arr: list, needFix: bool = False) -> list:
         '''Возвращаем текст из элементов bs4
         
         arr: список объектов bs4 из которых будет извлекаться текст
-        needFix (false/true): если этот параметр установлен как True, то из текста будут удалены \\n, \\t и пробелы с концов'''
+        needFix (False/true): если этот параметр установлен как True, то из текста будут удалены \\n, \\t и пробелы с концов'''
 
 
         schema = {
