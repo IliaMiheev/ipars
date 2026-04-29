@@ -5,6 +5,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 from pprint import pprint
 from time import sleep
+from typing import Any, Optional
 import requests
 from os import mkdir, listdir
 from os.path import exists
@@ -14,14 +15,14 @@ class Pars:
     '''Модуль для работы с запросами и bs4'''
 
 
-    def __validation(self, schema, expected):
+    def __validation(self, schema: dict, expected: dict) -> None:
         '''Валидация введённых данных для методов'''
         v = Validator(schema)
         if not v.validate(expected):
             raise ValueError(v.errors)
 
 
-    def exists(self, path: str) -> dict:
+    def exists(self, path: str) -> bool:
         '''Возвращает True если указанный файл или папка сущуствует, иначе — False'''
         schema = {'path': {'type': 'string'}}
         expected = {'path': path}
@@ -30,7 +31,7 @@ class Pars:
         return exists(path)
 
 
-    def listdir(self, path: str) -> dict:
+    def listdir(self, path: str) -> list:
         '''Возвращает список файлов в указанной директории'''
         schema = {'path': {'type': 'string'}}
         expected = {'path': path}
@@ -39,7 +40,7 @@ class Pars:
         return listdir(path)
 
 
-    def mkdir(self, nameDir: str):
+    def mkdir(self, nameDir: str) -> None:
         '''Создаёт папку если её ещё нет
 
         nameDir: название папки которая будет создана'''
@@ -51,7 +52,7 @@ class Pars:
             mkdir(nameDir)
 
 
-    def returnBs4Object(self, pathToFile: str, encoding: str = 'utf8', parser: str = 'lxml'):
+    def returnBs4Object(self, pathToFile: str, encoding: str = 'utf8', parser: str = 'lxml') -> BeautifulSoup:
         '''Возвращаем объект beautifulsoup
 
         pathToFile: путь до html файла
@@ -75,7 +76,7 @@ class Pars:
         return soup
 
 
-    def getTexts(self, arr: list, needFix: bool = False) -> list:
+    def getTexts(self, arr: list, needFix: bool = False) -> Optional[list]:
         '''Возвращаем текст из элементов bs4
         
         arr: список объектов bs4 из которых будет извлекаться текст
@@ -109,7 +110,7 @@ class Pars:
         return result
 
 
-    def getAttributes(self, arr: list, att: str) -> list:
+    def getAttributes(self, arr: list, att: str) -> Optional[list]:
         '''Возвращаем список значений атрибутов
         
         arr: список объектов bs4 из которых будет извлекаться атрибут
@@ -135,14 +136,14 @@ class Pars:
         return result
 
 
-    def pprint(self, data: any) -> None:
+    def pprint(self, data: Any) -> None:
         '''Выводим данные в удобочитаемом виде
 
         data: данные которые надо вывести'''
         pprint(data)
 
 
-    def getStaticPage(self, pathToSaveFile: str, url: str, writeMethod: str = 'w', headers: dict = None) -> int:
+    def getStaticPage(self, pathToSaveFile: str, url: str, writeMethod: str = 'w', headers: Optional[dict] = None) -> int:
         '''Сохраняем статическую страницу и возвращаем статус ответа от сервера
 
         pathToSaveFile: путь, куда сохранится полученный файл
@@ -186,6 +187,7 @@ class Pars:
         try:
             # Отправляем запрос
             req = requests.get(url, headers=headers)
+            req.raise_for_status()
 
             # Записываем данные
             if writeMethod == 'w':
@@ -203,12 +205,12 @@ class Pars:
             return req.status_code  # Возвращаем статус ответа от сервера
 
         except requests.exceptions.HTTPError as httpErr:
-            raise RuntimeError(f"HTTP ошибка: {httpErr}") from http_err
+            raise RuntimeError(f"HTTP ошибка: {httpErr}") from httpErr
         except Exception as e:
             raise RuntimeError(e) from e
 
 
-    def __scrollAndSave(self, driver, timeSleep, pathToSaveFile):
+    def __scrollAndSave(self, driver: webdriver.Chrome, timeSleep: int, pathToSaveFile: str) -> None:
         # Прокручиваем страницу до самого низа
         lastHeight = driver.execute_script("return document.body.scrollHeight")
         while True:
@@ -256,7 +258,7 @@ class Pars:
             self.__scrollAndSave(driver, timeSleep, pathToSaveFile)
 
 
-    def gpsa(self, pathToSaveFile: str, url: str, timeSleep=2):
+    def gpsa(self, pathToSaveFile: str, url: str, timeSleep: int = 2) -> None:
         '''Получаем страницу в полуавтоматическом режиме 
         gpsa - get page semi-automatically
 

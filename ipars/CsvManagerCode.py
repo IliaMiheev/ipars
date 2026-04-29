@@ -1,11 +1,12 @@
 import csv
 from pprint import pprint
+from typing import Any
 from cerberus import Validator
 
 class CsvManager:
     '''Класс для работы с csv файлами во время парсинга'''
 
-    def __init__(self, newline: str = '', encoding: str = 'utf8', delimiter: str = ';'):
+    def __init__(self, newline: str = '', encoding: str = 'utf8', delimiter: str = ';') -> None:
         '''Конструктор
 
         newline: новая строка в csv файле
@@ -24,7 +25,7 @@ class CsvManager:
         self.encoding = encoding
         self.delimiter = delimiter
 
-    def pprint(self, data: any) -> None:
+    def pprint(self, data: Any) -> None:
         '''Выводим данные в удобочитаемом виде
 
         data: данные которые надо вывести'''

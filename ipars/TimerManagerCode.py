@@ -1,8 +1,9 @@
 import time
+from typing import Optional
 
 class TimerManager:
     '''Класс для отслеживания времени работы'''
-    def __init__(self):
+    def __init__(self) -> None:
         '''Инициализация'''
         self.startTime = 0
         self.endTime = 0
@@ -17,7 +18,7 @@ class TimerManager:
         self.endTime = time.time()
         self.workTime = self.endTime - self.startTime
 
-    def getWorkTime(self, format :str = 'seconds', ndigits :int = None) -> int:
+    def getWorkTime(self, format: str = 'seconds', ndigits: Optional[int] = None) -> float:
         '''Возвращает время в нужном формате'''
         time_units = {
             'seconds': 1,
@@ -30,7 +31,7 @@ class TimerManager:
             raise ValueError('Для замера времени обязательно надо использовать метод "start" ДО выполнения кода')
 
         if self.endTime == 0:
-            raise ValueError('Для замера времени обязательно надо использовать метод "stop" ПОСЛЕ выполнения кода')
+            raise ValueError('Для замера времени обязательно надо использовать метод "end" ПОСЛЕ выполнения кода')
 
         if format not in time_units:
             raise ValueError(f"Неподдерживаемый формат '{format}'. Должен быть один из {list(time_units.keys())}")

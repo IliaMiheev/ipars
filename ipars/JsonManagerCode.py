@@ -1,11 +1,12 @@
 import json
 from pprint import pprint
+from typing import Any
 from cerberus import Validator
 
 class JsonManager:
     '''Класс для работы с json файлами во время парсинга'''
 
-    def __init__(self, encoding: str = 'utf8'):
+    def __init__(self, encoding: str = 'utf8') -> None:
         '''Конструктор
 
         encoding: кодировка открываемого файла'''
@@ -18,13 +19,13 @@ class JsonManager:
 
         self.encoding = encoding
 
-    def pprint(self, data: any) -> None:
+    def pprint(self, data: Any) -> None:
         '''Выводим данные в удобочитаемом виде
 
         data: данные которые надо вывести'''
         pprint(data)
 
-    def load(self, pathToJsonFile: str) -> json:
+    def load(self, pathToJsonFile: str) -> Any:
         '''Получаем данные из json файла
 
         pathToJsonFile: путь до json файла'''
@@ -40,7 +41,7 @@ class JsonManager:
             src = json.load(jsonFile)
         return src
 
-    def dump(self, pathToJsonFile: str, data: any) -> None:
+    def dump(self, pathToJsonFile: str, data: Any) -> None:
         '''Записываем данные в json файл
 
         pathToJsonFile: путь до json файла

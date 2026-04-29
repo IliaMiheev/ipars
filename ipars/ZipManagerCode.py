@@ -10,10 +10,10 @@ class ZipManager:
         - 'hard': Увеличенное сжатие
         - 'maximum': Максимальное сжатие
     """
-    def __init__(self, compression :str = 'normal'):
-        self.compression = self.setСompression(compression)
+    def __init__(self, compression: str = 'normal') -> None:
+        self.compression = self.setCompression(compression)
 
-    def setСompression(self, compressionStr):
+    def setCompression(self, compressionStr: str) -> int:
         if compressionStr == 'none':
             return zipfile.ZIP_STORED
         elif compressionStr == 'normal':
@@ -25,7 +25,7 @@ class ZipManager:
         else:
             raise ValueError("Некорректное значение compression. Допустимы значения none, normal, hard, maximun")
 
-    def zipFile(self, filePath:str, zipFilePath:str):
+    def zipFile(self, filePath: str, zipFilePath: str) -> None:
         """Архивируем один файл
         
         filePath (str): Путь к файлу, который нужно заархивировать
@@ -35,7 +35,7 @@ class ZipManager:
         with zipfile.ZipFile(zipFilePath, 'w', compression=self.compression) as zipf:
             zipf.write(filePath, os.path.basename(filePath))
 
-    def zipFolder(self, folderPath:str, zipFilePath:str):
+    def zipFolder(self, folderPath: str, zipFilePath: str) -> None:
         """Архивируем папку
         
         folderPath (str): Путь к папке, которую нужно заархивировать

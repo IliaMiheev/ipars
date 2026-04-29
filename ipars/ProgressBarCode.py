@@ -8,13 +8,13 @@ class ProgressBarManager:
     color: цвет прогресс-бара
     fill: заполнитель для сделанной части
     width: размер прогресс-бара в символах'''
-    def __init__(self, max, message='Процесс работы', color='green', fill='#', width=32):
+    def __init__(self, max: int, message: str = 'Процесс работы', color: str = 'green', fill: str = '#', width: int = 32) -> None:
         self.bar = Bar(max=max, message=message, color=color, fill=fill, suffix='%(index)d/%(max)d (%(percent)d%%)', width=width)
 
-    def next(self):
+    def next(self) -> None:
         '''Запускаем следущую итерацию прогресс-бара'''
         self.bar.next()
 
-    def finish(self):
+    def finish(self) -> None:
         '''Завершаем работу класса'''
         self.bar.finish()
