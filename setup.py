@@ -13,6 +13,7 @@ setup(
     url='https://iliamiheev.github.io/ipars-doc/#/./home',
     install_requires=[
         'requests',
+        'aiohttp',
         'selenium',
         'lxml',
         'bs4',

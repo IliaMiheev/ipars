@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from pprint import pprint
 from time import sleep
 from typing import Any, Optional
+import asyncio
+import aiohttp
 import requests
 from os import mkdir, listdir
 from os.path import exists
@@ -69,7 +71,6 @@ class Pars:
         self.__validation(schema, expected)
 
 
-        # Открываем файл и возвращаем объяект bs4 на его основе
         with open(pathToFile, encoding=encoding) as file:
             src = file.read()
         soup = BeautifulSoup(src, parser)
@@ -95,7 +96,6 @@ class Pars:
         for item in arr:
             data = item.text
 
-            # Удаляем пробелы в начале и конце строки, табуляцию, переносы строки
             if needFix:
                 data = data.strip()
                 data = data.replace('\t', '')
@@ -151,27 +151,8 @@ class Pars:
         writeMethod: метод записи данных в файл. "w" записывает текст, "wb" — байты
         headers: заголовки запроса к серверу'''
 
-        # Устанавливаем случайный user-agent если пользователь не указал свой
         if headers is None:
-            software_names = [
-                SoftwareName.FIREFOX.value, 
-                SoftwareName.CHROME.value, 
-                SoftwareName.EDGE.value, 
-                SoftwareName.SAFARI.value, 
-                SoftwareName.YANDEX.value, 
-                ]
-            operating_systems = [
-                OperatingSystem.WINDOWS.value, 
-                OperatingSystem.LINUX.value,
-                OperatingSystem.IOS.value,
-                OperatingSystem.MACOS.value, 
-                ]   
-            user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=10)
-            user_agent = user_agent_rotator.get_random_user_agent()
-            headers = {
-                "Accept": "*/*",
-                "User-Agent": user_agent
-            }
+            headers = self.__makeHeaders()
 
 
         schema = {
@@ -185,11 +166,9 @@ class Pars:
 
 
         try:
-            # Отправляем запрос
             req = requests.get(url, headers=headers)
             req.raise_for_status()
 
-            # Записываем данные
             if writeMethod == 'w':
                 src = req.text
                 with open(pathToSaveFile, 'w', encoding='utf-8') as file:
@@ -202,7 +181,7 @@ class Pars:
             else:
                 raise ValueError(f"Неподдерживаемый метод записи: {writeMethod}")
 
-            return req.status_code  # Возвращаем статус ответа от сервера
+            return req.status_code
 
         except requests.exceptions.HTTPError as httpErr:
             raise RuntimeError(f"HTTP ошибка: {httpErr}") from httpErr
@@ -211,14 +190,11 @@ class Pars:
 
 
     def __scrollAndSave(self, driver: webdriver.Chrome, timeSleep: int, pathToSaveFile: str) -> None:
-        # Прокручиваем страницу до самого низа
+        '''Прокручиваем страницу до самого низа'''
         lastHeight = driver.execute_script("return document.body.scrollHeight")
         while True:
-            # Прокручиваем до низа страницы
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            # Ждем загрузки страницы
             sleep(timeSleep)
-            # Вычисляем новую высоту страницы
             newHeight = driver.execute_script("return document.body.scrollHeight")
             if newHeight == lastHeight:
                 break
@@ -247,12 +223,10 @@ class Pars:
         self.__validation(schema, expected)
 
 
-        # Ставим настройку на запуск баузера в фоновом режиме, если closeWindow = True
         options = Options()
         if closeWindow:
             options.add_argument('--headless')
 
-        # открываем браузер
         with webdriver.Chrome(options=options) as driver:
             driver.get(url)
             self.__scrollAndSave(driver, timeSleep, pathToSaveFile)
@@ -280,3 +254,80 @@ class Pars:
             driver.get(url)
             a = input('Нажми ENTER когда окажешься на нужной тебе странице')
             self.__scrollAndSave(driver, timeSleep, pathToSaveFile)
+
+
+    def __makeHeaders(self) -> dict:
+        '''Генерирует случайный User-Agent для запроса'''
+        software_names = [
+            SoftwareName.FIREFOX.value,
+            SoftwareName.CHROME.value,
+            SoftwareName.EDGE.value,
+            SoftwareName.SAFARI.value,
+            SoftwareName.YANDEX.value,
+        ]
+        operating_systems = [
+            OperatingSystem.WINDOWS.value,
+            OperatingSystem.LINUX.value,
+            OperatingSystem.IOS.value,
+            OperatingSystem.MACOS.value,
+        ]
+        user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=10)
+        return {
+            'Accept': '*/*',
+            'User-Agent': user_agent_rotator.get_random_user_agent()
+        }
+
+
+    async def getStaticPageAsync(
+        self,
+        pathToSaveFile: str,
+        url: str,
+        writeMethod: str = 'w',
+        headers: Optional[dict] = None,
+        session: Optional[aiohttp.ClientSession] = None,
+    ) -> int:
+        '''Асинхронно сохраняет статическую страницу и возвращает статус ответа
+
+        pathToSaveFile: путь, куда сохранится полученный файл
+        url: ссылка на данные
+        writeMethod: метод записи. "w" — текст, "wb" — байты (для картинок)
+        headers: заголовки запроса. Если None — подставится случайный User-Agent
+        session: aiohttp.ClientSession для переиспользования соединений'''
+
+        if headers is None:
+            headers = self.__makeHeaders()
+
+        schema = {
+            'pathToSaveFile': {'type': 'string'},
+            'url': {'type': 'string'},
+            'writeMethod': {'type': 'string', 'allowed': ['w', 'wb']},
+            'headers': {'type': 'dict'},
+        }
+        self.__validation(schema, {'pathToSaveFile': pathToSaveFile, 'url': url, 'writeMethod': writeMethod, 'headers': headers})
+
+        close_session = session is None
+        if close_session:
+            session = aiohttp.ClientSession()
+
+        try:
+            async with session.get(url, headers=headers) as response:
+                response.raise_for_status()
+
+                if writeMethod == 'w':
+                    text = await response.text(encoding='utf-8')
+                    with open(pathToSaveFile, 'w', encoding='utf-8') as file:
+                        file.write(text)
+                elif writeMethod == 'wb':
+                    content = await response.read()
+                    with open(pathToSaveFile, 'wb') as file:
+                        file.write(content)
+
+                return response.status
+
+        except aiohttp.ClientResponseError as httpErr:
+            raise RuntimeError(f'HTTP ошибка: {httpErr}') from httpErr
+        except Exception as e:
+            raise RuntimeError(e) from e
+        finally:
+            if close_session:
+                await session.close()
