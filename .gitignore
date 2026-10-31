@@ -3,6 +3,7 @@ __pycache__
 *.csv
 *.json
 *.zip
+*.egg-info
 
 ideas.md
 *copy*
